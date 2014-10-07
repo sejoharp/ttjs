@@ -1,0 +1,21 @@
+{
+  "name": "ttjs",
+  "version": "0.0.1",
+  "description": "timetracker with node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hapi": "^6.9.0",
+    "mongoose": "^3.8.16"
+  },
+  "devDependencies": {
+    "chai": "^1.9.2",
+    "chai-as-promised": "^4.1.1",
+    "mocha": "^1.21.4",
+    "sinon": "^1.10.3"
+  }
+}
