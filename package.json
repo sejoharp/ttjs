@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "hapi": "^6.9.0",
-    "mongoose": "^3.8.16"
+    "promised-mongo": "^0.11.1"
   },
   "devDependencies": {
     "chai": "^1.9.2",
