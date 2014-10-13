@@ -1,18 +1,18 @@
 var db = require('./database').db;
-//var mongoose = require('mongoose');
 
-//mongoose.connect('mongodb://localhost/test');
-//create the schema
 var collection = db.collection('intervals');
 
-//var intervalSchema = new mongoose.Schema({
-//    userId: { type: mongoose.Schema.Types.ObjectId, required: true },
-//    start: { type: Date, required: true, default: Date.now },
-//    stop: { type: Date, required: false }
-//});
-
-//create the model
-//var Interval = mongoose.model('Interval', intervalSchema, 'intervals');
-
-exports.Interval = collection;
+exports.collection = collection;
 exports.ObjectId = db.ObjectId;
+exports.findById = function (id) {
+    return collection.findOne({_id: id});
+};
+exports.insert = function (interval) {
+    if (!interval.start) {
+        interval.start = new Date();
+    }
+    return collection.insert(interval);
+};
+exports.findByUserId = function(userId){
+  return collection.find({userId: userId}).toArray();
+};
