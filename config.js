@@ -1,6 +1,6 @@
-module.exports = {  
+module.exports = {
     mongo: {
-        url: 'localhost',
+        host: 'localhost',
         database: 'test'
     }
-}
+};
