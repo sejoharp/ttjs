@@ -96,4 +96,26 @@ describe('Interval', function () {
             expect(docs).to.have.length(1);
         });
     });
+    it('should find all intervals in range', function(){
+        var startDate = new Date();
+        var stopDate = new Date();
+        var userId =  Interval.ObjectId;
+        return Interval.findInRange(userId, startDate, stopDate);
+    });
+    it('find a working user', function(){
+        var userId = Interval.ObjectId;
+        return Interval.isUserWorking(userId);
+    });
+    it('find a not working user', function(){
+        var userId = Interval.ObjectId;
+        return Interval.isUserWorking(userId);
+    });
+    it('finish an interval(adds a stop date)', function(){
+        var userId = Interval.ObjectId;
+        return Interval.stop(userId);
+    });
+    it('start an interval', function(){
+        var userId = Interval.ObjectId;
+        return Interval.start(userId);
+    });
 });
