@@ -1,7 +1,6 @@
 var db = require('./database').db;
 
 var collection = db.collection('intervals');
-
 exports.collection = collection;
 exports.ObjectId = db.ObjectId;
 exports.findById = function (id) {
@@ -13,6 +12,9 @@ exports.insert = function (interval) {
     }
     return collection.insert(interval);
 };
-exports.findByUserId = function(userId){
-  return collection.find({userId: userId}).toArray();
+exports.findByUserId = function (userId) {
+    return collection.find({userId: userId}).toArray();
+};
+exports.save = function (document) {
+    return collection.save(document);
 };

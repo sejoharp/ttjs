@@ -30,5 +30,8 @@ module.exports = {
         _id: ObjectId(),
         start: new Date(2014, 10, 1, 9, 0, 0, 0),
         userId: UserTestData.user1._id
+    },
+    all: function(){
+        return [this.interval1User1Closed, this.interval2User1Closed, this.interval3User1Closed, this.interval4User2Closed, this.interval5User1Open];
     }
 };
