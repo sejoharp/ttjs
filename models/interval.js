@@ -18,3 +18,9 @@ exports.findByUserId = function (userId) {
 exports.save = function (document) {
     return collection.save(document);
 };
+exports.isUserWorking = function (userId) {
+    return collection.count({userId: userId, stop: {$exists: false}})
+        .then(function (count) {
+            return count > 0;
+        });
+};

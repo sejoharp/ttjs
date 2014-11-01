@@ -14,48 +14,53 @@ describe('Interval', function () {
     });
 
     it('should save an instance', function () {
-        return Interval.collection.insert(IntervalTestData.interval1User1Closed).then(function (doc) {
-            return Interval.collection.findOne({_id: doc._id});
-        }).then(function (doc) {
-            should.exist(doc);
-            doc.userId.toString().should.equal(IntervalTestData.interval1User1Closed.userId.toString());
-        });
+        return Interval.collection.insert(IntervalTestData.interval1User1Closed)
+            .then(function (doc) {
+                return Interval.collection.findOne({_id: doc._id});
+            }).then(function (doc) {
+                should.exist(doc);
+                doc.userId.toString().should.equal(IntervalTestData.interval1User1Closed.userId.toString());
+            });
     });
     it('should find an instance by id', function () {
-        return Interval.collection.insert(IntervalTestData.interval1User1Closed).then(function (doc) {
-            return Interval.findById(doc._id);
-        }).then(function (doc) {
-            should.exist(doc);
-            doc.userId.toString().should.equal(IntervalTestData.interval1User1Closed.userId.toString());
-        });
+        return Interval.collection.insert(IntervalTestData.interval1User1Closed)
+            .then(function (doc) {
+                return Interval.findById(doc._id);
+            }).then(function (doc) {
+                should.exist(doc);
+                doc.userId.toString().should.equal(IntervalTestData.interval1User1Closed.userId.toString());
+            });
     });
     it('should insert an instance with new date as default, if not given', function () {
         var userId = Interval.ObjectId();
-        return Interval.insert({userId: userId}).then(function (doc) {
-            return Interval.findById(doc._id);
-        }).then(function (doc) {
-            expect(doc.start).to.be.a('Date');
-            expect(doc.start).to.equalDate(new Date());
-            expect(doc.start).to.beforeTime(new Date());
-            expect(doc.userId.toString()).to.be.equal(userId.toString());
-        });
+        return Interval.insert({userId: userId})
+            .then(function (doc) {
+                return Interval.findById(doc._id);
+            }).then(function (doc) {
+                expect(doc.start).to.be.a('Date');
+                expect(doc.start).to.equalDate(new Date());
+                expect(doc.start).to.beforeTime(new Date());
+                expect(doc.userId.toString()).to.be.equal(userId.toString());
+            });
     });
     it('should insert an instance with a given date', function () {
-        return Interval.insert(IntervalTestData.interval5User1Open).then(function (doc) {
-            return Interval.findById(doc._id);
-        }).then(function (doc) {
-            expect(doc.start.getTime()).to.equal(IntervalTestData.interval5User1Open.start.getTime());
-            doc.userId.toString().should.equal(IntervalTestData.interval5User1Open.userId.toString());
-        });
+        return Interval.insert(IntervalTestData.interval5User1Open)
+            .then(function (doc) {
+                return Interval.findById(doc._id);
+            }).then(function (doc) {
+                expect(doc.start.getTime()).to.equal(IntervalTestData.interval5User1Open.start.getTime());
+                doc.userId.toString().should.equal(IntervalTestData.interval5User1Open.userId.toString());
+            });
     });
     it('should find all instances by userId', function () {
-        return Interval.insert(IntervalTestData.interval5User1Open).then(function () {
-            return Interval.findByUserId(IntervalTestData.interval5User1Open.userId);
-        }).then(function (docs) {
-            expect(docs).to.have.length(1);
-            expect(docs[0].start).to.equalTime(IntervalTestData.interval5User1Open.start);
-            docs[0].userId.toString().should.equal(IntervalTestData.interval5User1Open.userId.toString());
-        });
+        return Interval.insert(IntervalTestData.interval5User1Open)
+            .then(function () {
+                return Interval.findByUserId(IntervalTestData.interval5User1Open.userId);
+            }).then(function (docs) {
+                expect(docs).to.have.length(1);
+                expect(docs[0].start).to.equalTime(IntervalTestData.interval5User1Open.start);
+                docs[0].userId.toString().should.equal(IntervalTestData.interval5User1Open.userId.toString());
+            });
     });
     it('should return an empty array, if there is no instance with the userId', function () {
         return Interval.findByUserId(Interval.ObjectId())
@@ -65,39 +70,49 @@ describe('Interval', function () {
     });
     it('should add the property stop', function () {
         var stopDate = new Date();
-        return Interval.insert(IntervalTestData.interval5User1Open).then(function () {
-            var change = {$set: {stop: stopDate}};
-            var filter = {userId: IntervalTestData.interval5User1Open.userId};
-            return Interval.collection.update(filter, change);
-        }).then(function () {
-            return Interval.findByUserId(IntervalTestData.interval5User1Open.userId);
-        }).then(function (docs) {
-            expect(docs[0].userId.toString()).to.equal(IntervalTestData.interval5User1Open.userId.toString());
-            expect(docs[0].start).to.equalTime(IntervalTestData.interval5User1Open.start);
-            expect(docs[0].stop).to.equalTime(stopDate);
-        });
+        return Interval.insert(IntervalTestData.interval5User1Open)
+            .then(function () {
+                var change = {$set: {stop: stopDate}};
+                var filter = {userId: IntervalTestData.interval5User1Open.userId};
+                return Interval.collection.update(filter, change);
+            }).then(function () {
+                return Interval.findByUserId(IntervalTestData.interval5User1Open.userId);
+            }).then(function (docs) {
+                expect(docs[0].userId.toString()).to.equal(IntervalTestData.interval5User1Open.userId.toString());
+                expect(docs[0].start).to.equalTime(IntervalTestData.interval5User1Open.start);
+                expect(docs[0].stop).to.equalTime(stopDate);
+            });
     });
     it('should save changes to the same interval', function () {
         var stopDate = new Date();
-        return Interval.save(IntervalTestData.interval5User1Open).then(function (doc) {
-            doc.stop = stopDate;
-            return Interval.collection.save(doc);
-        }).then(function () {
-            return Interval.collection.find().toArray();
-        }).then(function (docs) {
-            expect(docs[0].userId.toString()).to.equal(IntervalTestData.interval5User1Open.userId.toString());
-            expect(docs[0].start).to.equalTime(IntervalTestData.interval5User1Open.start);
-            expect(docs[0].stop).to.equalTime(stopDate);
-            expect(docs).to.have.length(1);
-        });
-    });
-    it('find a working user', function () {
-        var userId = Interval.ObjectId;
-        return Interval.isUserWorking(userId);
+        return Interval.save(IntervalTestData.interval5User1Open)
+            .then(function (doc) {
+                doc.stop = stopDate;
+                return Interval.collection.save(doc);
+            }).then(function () {
+                return Interval.collection.find().toArray();
+            }).then(function (docs) {
+                expect(docs[0].userId.toString()).to.equal(IntervalTestData.interval5User1Open.userId.toString());
+                expect(docs[0].start).to.equalTime(IntervalTestData.interval5User1Open.start);
+                expect(docs[0].stop).to.equalTime(stopDate);
+                expect(docs).to.have.length(1);
+            });
     });
     it('find a not working user', function () {
-        var userId = Interval.ObjectId;
-        return Interval.isUserWorking(userId);
+        return Interval.save(IntervalTestData.interval7User1NotWorking)
+            .then(function () {
+                return Interval.isUserWorking(IntervalTestData.interval7User1NotWorking.userId);
+            }).then(function (isWorking) {
+                expect(isWorking).to.be.false;
+            });
+    });
+    it('find a working user', function () {
+        return Interval.save(IntervalTestData.interval6User1Working)
+            .then(function () {
+                return Interval.isUserWorking(IntervalTestData.interval7User1NotWorking.userId);
+            }).then(function (isWorking) {
+                expect(isWorking).to.be.true;
+            });
     });
     it('finish an interval(adds a stop date)', function () {
         var userId = Interval.ObjectId;
@@ -112,5 +127,4 @@ describe('Interval', function () {
             return Interval.findInRange(new Date(2014, 10, 11, 0, 0, 0, 0), new Date(2014, 10, 9, 23, 59, 59, 0), UserTestData.user1._id);
         });
     });
-
 });
