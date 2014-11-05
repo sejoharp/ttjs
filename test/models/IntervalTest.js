@@ -115,12 +115,21 @@ describe('Interval', function () {
             });
     });
     it('finish an interval(adds a stop date)', function () {
-        var userId = Interval.ObjectId;
+        var userId = Interval.ObjectId();
         return Interval.stop(userId);
     });
     it('start an interval', function () {
-        var userId = Interval.ObjectId;
-        return Interval.start(userId);
+        var userId = Interval.ObjectId();
+        return Interval.start(userId)
+            .then(function () {
+                return Interval.findByUserId(userId)
+            })
+            .then(function (intervals) {
+                expect(intervals).to.have.length(1);
+                expect(intervals[0].start).to.equalDate(new Date());
+                expect(intervals[0].start).to.beforeTime(new Date());
+                expect(intervals[0].userId.toString()).to.be.equal(userId.toString());
+            });
     });
     it('should find all intervals in range', function () {
         return Interval.collection.insert(IntervalTestData.all()).then(function () {

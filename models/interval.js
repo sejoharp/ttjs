@@ -1,26 +1,28 @@
 var db = require('./database').db;
 
-var collection = db.collection('intervals');
-exports.collection = collection;
+exports.collection = db.collection('intervals');;
 exports.ObjectId = db.ObjectId;
 exports.findById = function (id) {
-    return collection.findOne({_id: id});
+    return exports.collection.findOne({_id: id});
 };
 exports.insert = function (interval) {
     if (!interval.start) {
         interval.start = new Date();
     }
-    return collection.insert(interval);
+    return exports.collection.insert(interval);
 };
 exports.findByUserId = function (userId) {
-    return collection.find({userId: userId}).toArray();
+    return exports.collection.find({userId: userId}).toArray();
 };
 exports.save = function (document) {
-    return collection.save(document);
+    return exports.collection.save(document);
 };
 exports.isUserWorking = function (userId) {
-    return collection.count({userId: userId, stop: {$exists: false}})
+    return exports.collection.count({userId: userId, stop: {$exists: false}})
         .then(function (count) {
             return count > 0;
         });
+};
+exports.start = function (userId) {
+    return exports.collection.insert({userId: userId, start: new Date()});
 };
