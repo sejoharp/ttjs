@@ -20,6 +20,12 @@ module.exports = {
         stop: new Date(2014, 10, 10, 16, 30, 0, 0),
         userId: UserTestData.user1._id
     },
+    interval8User1Closed: {
+        _id: ObjectId(),
+        start: new Date(2014, 10, 12, 0, 0, 0, 0),
+        stop: new Date(2014, 10, 12, 8, 30, 0, 0),
+        userId: UserTestData.user1._id
+    },
     interval4User2Closed: {
         _id: ObjectId(),
         start: new Date(2014, 10, 10, 8, 0, 0, 0),
@@ -46,6 +52,7 @@ module.exports = {
         return [this.interval1User1Closed,
             this.interval2User1Closed,
             this.interval3User1Closed,
+            this.interval8User1Closed,
             this.interval4User2Closed,
             this.interval5User1Open,
             this.interval6User1Working,
