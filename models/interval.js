@@ -1,6 +1,6 @@
 var db = require('./database').db;
 
-exports.collection = db.collection('intervals');;
+exports.collection = db.collection('intervals');
 exports.ObjectId = db.ObjectId;
 exports.findById = function (id) {
     return exports.collection.findOne({_id: id});
@@ -25,4 +25,14 @@ exports.isUserWorking = function (userId) {
 };
 exports.start = function (userId) {
     return exports.collection.insert({userId: userId, start: new Date()});
+};
+exports.stop = function (userId) {
+    return exports.collection.findOne({userId: userId, stop: {$exists: false}})
+        .then(function (interval) {
+            interval.stop = new Date();
+            return exports.save(interval);
+        });
+};
+exports.findInRange = function (userId, start, end) {
+    return exports.collection.find({start: {$gte: start, $lte: end},userId: userId}).toArray();
 };

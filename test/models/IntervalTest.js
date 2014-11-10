@@ -53,13 +53,13 @@ describe('Interval', function () {
             });
     });
     it('should find all instances by userId', function () {
-        return Interval.insert(IntervalTestData.interval5User1Open)
+        return Interval.collection.insert(IntervalTestData.all())
             .then(function () {
-                return Interval.findByUserId(IntervalTestData.interval5User1Open.userId);
+                return Interval.findByUserId(IntervalTestData.interval4User2Closed.userId);
             }).then(function (docs) {
                 expect(docs).to.have.length(1);
-                expect(docs[0].start).to.equalTime(IntervalTestData.interval5User1Open.start);
-                docs[0].userId.toString().should.equal(IntervalTestData.interval5User1Open.userId.toString());
+                expect(docs[0].start).to.equalTime(IntervalTestData.interval4User2Closed.start);
+                docs[0].userId.toString().should.equal(IntervalTestData.interval4User2Closed.userId.toString());
             });
     });
     it('should return an empty array, if there is no instance with the userId', function () {
@@ -98,7 +98,7 @@ describe('Interval', function () {
                 expect(docs).to.have.length(1);
             });
     });
-    it('find a not working user', function () {
+    it('should find a not working user', function () {
         return Interval.save(IntervalTestData.interval7User1NotWorking)
             .then(function () {
                 return Interval.isUserWorking(IntervalTestData.interval7User1NotWorking.userId);
@@ -106,7 +106,7 @@ describe('Interval', function () {
                 expect(isWorking).to.be.false;
             });
     });
-    it('find a working user', function () {
+    it('should find a working user', function () {
         return Interval.save(IntervalTestData.interval6User1Working)
             .then(function () {
                 return Interval.isUserWorking(IntervalTestData.interval7User1NotWorking.userId);
@@ -114,26 +114,49 @@ describe('Interval', function () {
                 expect(isWorking).to.be.true;
             });
     });
-    it('finish an interval(adds a stop date)', function () {
-        var userId = Interval.ObjectId();
-        return Interval.stop(userId);
+    it('should finish an interval(adds a stop date)', function () {
+        return Interval.save(IntervalTestData.interval6User1Working)
+            .then(function () {
+                return Interval.stop(UserTestData.user1.id());
+            }).then(function () {
+                return Interval.findByUserId(UserTestData.user1.id());
+            }).then(function (intervals) {
+                expect(intervals).to.have.length(1);
+                expect(intervals[0].userId.toString()).to.equal(IntervalTestData.interval6User1Working.userId.toString());
+                expect(intervals[0].start).to.equalTime(IntervalTestData.interval6User1Working.start);
+                expect(intervals[0].stop).to.afterTime(intervals[0].start);
+            });
     });
-    it('start an interval', function () {
+    it('should start an interval', function () {
         var userId = Interval.ObjectId();
         return Interval.start(userId)
             .then(function () {
                 return Interval.findByUserId(userId)
-            })
-            .then(function (intervals) {
+            }).then(function (intervals) {
                 expect(intervals).to.have.length(1);
                 expect(intervals[0].start).to.equalDate(new Date());
                 expect(intervals[0].start).to.beforeTime(new Date());
                 expect(intervals[0].userId.toString()).to.be.equal(userId.toString());
             });
     });
+    it('should return empty array when a user has no intervals', function () {
+        var userId = Interval.ObjectId();
+        return Interval.collection.insert(IntervalTestData.all())
+            .then(function () {
+                return Interval.findByUserId(userId);
+            }).then(function (intervals) {
+                expect(intervals).to.have.length(0);
+            })
+    });
     it('should find all intervals in range', function () {
-        return Interval.collection.insert(IntervalTestData.all()).then(function () {
-            return Interval.findInRange(new Date(2014, 10, 11, 0, 0, 0, 0), new Date(2014, 10, 9, 23, 59, 59, 0), UserTestData.user1._id);
-        });
+        return Interval.collection.insert(IntervalTestData.all())
+            .then(function () {
+                return Interval.findInRange(UserTestData.user1._id, new Date(2014, 10, 10, 0, 0, 0, 0), new Date(2014, 10, 11, 23, 59, 59, 0));
+            }).then(function (intervals) {
+                expect(intervals).to.have.length(1);
+                expect(intervals[0].start).to.equalTime(IntervalTestData.interval3User1Closed.start);
+                expect(intervals[0].stop).to.equalTime(IntervalTestData.interval3User1Closed.stop);
+                expect(intervals[0].userId.toString()).to.equal(IntervalTestData.interval3User1Closed.userId.toString());
+            });
     });
 });
