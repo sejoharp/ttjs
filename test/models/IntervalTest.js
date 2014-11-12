@@ -13,7 +13,7 @@ describe('Interval', function () {
         Interval.collection.drop();
     });
 
-    it('should save an instance', function () {
+    it('saves an instance', function () {
         return Interval.collection.insert(IntervalTestData.interval1User1Closed)
             .then(function (doc) {
                 return Interval.collection.findOne({_id: doc._id});
@@ -22,7 +22,7 @@ describe('Interval', function () {
                 doc.userId.toString().should.equal(IntervalTestData.interval1User1Closed.userId.toString());
             });
     });
-    it('should find an instance by id', function () {
+    it('finds an instance by id', function () {
         return Interval.collection.insert(IntervalTestData.interval1User1Closed)
             .then(function (doc) {
                 return Interval.findById(doc._id);
@@ -31,7 +31,7 @@ describe('Interval', function () {
                 doc.userId.toString().should.equal(IntervalTestData.interval1User1Closed.userId.toString());
             });
     });
-    it('should insert an instance with new date as default, if not given', function () {
+    it('inserts an instance with new date as default, if not given', function () {
         var userId = Interval.ObjectId();
         return Interval.insert({userId: userId})
             .then(function (doc) {
@@ -43,7 +43,7 @@ describe('Interval', function () {
                 expect(doc.userId.toString()).to.be.equal(userId.toString());
             });
     });
-    it('should insert an instance with a given date', function () {
+    it('inserts an instance with a given date', function () {
         return Interval.insert(IntervalTestData.interval5User1Open)
             .then(function (doc) {
                 return Interval.findById(doc._id);
@@ -52,7 +52,7 @@ describe('Interval', function () {
                 doc.userId.toString().should.equal(IntervalTestData.interval5User1Open.userId.toString());
             });
     });
-    it('should find all instances by userId', function () {
+    it('finds all instances by userId', function () {
         return Interval.collection.insert(IntervalTestData.all())
             .then(function () {
                 return Interval.findByUserId(IntervalTestData.interval4User2Closed.userId);
@@ -62,13 +62,13 @@ describe('Interval', function () {
                 docs[0].userId.toString().should.equal(IntervalTestData.interval4User2Closed.userId.toString());
             });
     });
-    it('should return an empty array, if there is no instance with the userId', function () {
+    it('returns an empty array, if there is no instance with the userId', function () {
         return Interval.findByUserId(Interval.ObjectId())
             .then(function (docs) {
                 expect(docs).to.have.length(0);
             });
     });
-    it('should add the property stop', function () {
+    it('adds the property stop', function () {
         var stopDate = new Date();
         return Interval.insert(IntervalTestData.interval5User1Open)
             .then(function () {
@@ -83,7 +83,7 @@ describe('Interval', function () {
                 expect(docs[0].stop).to.equalTime(stopDate);
             });
     });
-    it('should save changes to the same interval', function () {
+    it('saves changes to the same interval', function () {
         var stopDate = new Date();
         return Interval.save(IntervalTestData.interval5User1Open)
             .then(function (doc) {
@@ -98,7 +98,7 @@ describe('Interval', function () {
                 expect(docs).to.have.length(1);
             });
     });
-    it('should find a not working user', function () {
+    it('finds a not working user', function () {
         return Interval.save(IntervalTestData.interval7User1NotWorking)
             .then(function () {
                 return Interval.isUserWorking(IntervalTestData.interval7User1NotWorking.userId);
@@ -106,7 +106,7 @@ describe('Interval', function () {
                 expect(isWorking).to.be.false;
             });
     });
-    it('should find a working user', function () {
+    it('finds a working user', function () {
         return Interval.save(IntervalTestData.interval6User1Working)
             .then(function () {
                 return Interval.isUserWorking(IntervalTestData.interval7User1NotWorking.userId);
@@ -114,7 +114,7 @@ describe('Interval', function () {
                 expect(isWorking).to.be.true;
             });
     });
-    it('should finish an interval(adds a stop date)', function () {
+    it('finishes an interval(adds a stop date)', function () {
         return Interval.save(IntervalTestData.interval6User1Working)
             .then(function () {
                 return Interval.stop(UserTestData.user1.id());
@@ -127,7 +127,7 @@ describe('Interval', function () {
                 expect(intervals[0].stop).to.afterTime(intervals[0].start);
             });
     });
-    it('should start an interval', function () {
+    it('starts an interval', function () {
         var userId = Interval.ObjectId();
         return Interval.start(userId)
             .then(function () {
@@ -139,7 +139,7 @@ describe('Interval', function () {
                 expect(intervals[0].userId.toString()).to.be.equal(userId.toString());
             });
     });
-    it('should return empty array when a user has no intervals', function () {
+    it('returns empty array when a user has no intervals', function () {
         var userId = Interval.ObjectId();
         return Interval.collection.insert(IntervalTestData.all())
             .then(function () {
@@ -148,7 +148,7 @@ describe('Interval', function () {
                 expect(intervals).to.have.length(0);
             })
     });
-    it('should find all intervals in range', function () {
+    it('returns all intervals in a given range', function () {
         return Interval.collection.insert(IntervalTestData.all())
             .then(function () {
                 return Interval.findInRange(UserTestData.user1._id, new Date(2014, 10, 10, 0, 0, 0, 0), new Date(2014, 10, 11, 23, 59, 59, 0));
