@@ -3,6 +3,7 @@
 var Interval = require('../../models/interval');
 var chai = require('chai');
 chai.use(require('chai-datetime'));
+chai.use(require('chai-as-promised'));
 var should = chai.should();
 var expect = chai.expect;
 var IntervalTestData = require('./intervalTestData');
@@ -99,31 +100,31 @@ describe('Interval', function () {
             });
     });
     it('finds a not working user', function () {
-        return Interval.save(IntervalTestData.interval7User1NotWorking)
+        return Interval.save(IntervalTestData.interval7User1Closed)
             .then(function () {
-                return Interval.isUserWorking(IntervalTestData.interval7User1NotWorking.userId);
+                return Interval.isUserWorking(IntervalTestData.interval7User1Closed.userId);
             }).then(function (isWorking) {
                 expect(isWorking).to.be.false;
             });
     });
     it('finds a working user', function () {
-        return Interval.save(IntervalTestData.interval6User1Working)
+        return Interval.save(IntervalTestData.interval6User1Open)
             .then(function () {
-                return Interval.isUserWorking(IntervalTestData.interval7User1NotWorking.userId);
+                return Interval.isUserWorking(IntervalTestData.interval7User1Closed.userId);
             }).then(function (isWorking) {
                 expect(isWorking).to.be.true;
             });
     });
     it('finishes an interval(adds a stop date)', function () {
-        return Interval.save(IntervalTestData.interval6User1Working)
+        return Interval.save(IntervalTestData.interval6User1Open)
             .then(function () {
                 return Interval.stop(UserTestData.user1.id());
             }).then(function () {
                 return Interval.findByUserId(UserTestData.user1.id());
             }).then(function (intervals) {
                 expect(intervals).to.have.length(1);
-                expect(intervals[0].userId.toString()).to.equal(IntervalTestData.interval6User1Working.userId.toString());
-                expect(intervals[0].start).to.equalTime(IntervalTestData.interval6User1Working.start);
+                expect(intervals[0].userId.toString()).to.equal(IntervalTestData.interval6User1Open.userId.toString());
+                expect(intervals[0].start).to.equalTime(IntervalTestData.interval6User1Open.start);
                 expect(intervals[0].stop).to.afterTime(intervals[0].start);
             });
     });
@@ -157,6 +158,40 @@ describe('Interval', function () {
                 expect(intervals[0].start).to.equalTime(IntervalTestData.interval3User1Closed.start);
                 expect(intervals[0].stop).to.equalTime(IntervalTestData.interval3User1Closed.stop);
                 expect(intervals[0].userId.toString()).to.equal(IntervalTestData.interval3User1Closed.userId.toString());
+            });
+    });
+    it('calculates the overtime with given time to work per day', function () {
+        return Interval.collection.insert(IntervalTestData.all())
+            .then(function () {
+                return Interval.computeOvertime(UserTestData.user1.id(), UserTestData.user1.worktime);
+            }).then(function (overtime) {
+                expect(overtime).is.equal()
+            })
+    });
+    it('ignores open intervals when calculating overtime');
+    it('ensures that stop is later than start');
+    it('throws that stop is later than start', function () {
+        return Interval.collection.insert(IntervalTestData.interval2User3Open())
+            .then(function () {
+                return Interval.stop(UserTestData.user3.id()).should.be.rejectedWith('STOP_CANNOT_BE_BEFORE_START');
+            });
+    });
+    it('throws that stop is later than start2', function () {
+        return Interval.collection.insert(IntervalTestData.interval2User3Open())
+            .then(function () {
+                return Interval.stop(UserTestData.user3.id());
+            }).fail(function (error) {
+                expect(error.message).to.equal('STOP_CANNOT_BE_BEFORE_START');
+            });
+    });
+    it('throws that stop is later than start3', function () {
+        return Interval.collection.insert(IntervalTestData.interval2User3Open())
+            .then(function () {
+                return Interval.stop(UserTestData.user3.id());
+            }).then(function () {
+                chai.assert.fail();
+            }, function (error) {
+                expect(error.message).to.equal('STOP_CANNOT_BE_BEFORE_START');
             });
     });
 });

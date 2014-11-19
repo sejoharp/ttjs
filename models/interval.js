@@ -29,6 +29,9 @@ exports.start = function (userId) {
 exports.stop = function (userId) {
     return exports.collection.findOne({userId: userId, stop: {$exists: false}})
         .then(function (interval) {
+            if (interval.start.getTime() > new Date){
+                throw new Error("STOP_CANNOT_BE_BEFORE_START");
+            }
             interval.stop = new Date();
             return exports.save(interval);
         });
