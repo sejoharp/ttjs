@@ -65,6 +65,11 @@ module.exports = {
         stop: new Date(2014, 10, 2, 16, 0, 0, 0),
         userId: userTestData.user3._id
     },
+    interval2User3Invalid: {
+        _id: ObjectId(),
+        stop: new Date(2014, 10, 2, 16, 0, 0, 0),
+        userId: userTestData.user3._id
+    },
     interval2User3Open: function () {
         return {
             _id: ObjectId(),

@@ -173,7 +173,7 @@ describe('Interval', function () {
     it('throws that stop is later than start', function () {
         return Interval.collection.insert(intervalTestData.interval2User3Open())
             .then(function () {
-                return Interval.stop(userTestData.user3.id()).should.be.rejectedWith('STOP_CANNOT_BE_BEFORE_START');
+                return Interval.stop(userTestData.user3.id()).should.be.rejectedWith('START_CANNOT_BE_IN_FUTURE');
             });
     });
     it('throws that stop is later than start2', function () {
@@ -181,7 +181,7 @@ describe('Interval', function () {
             .then(function () {
                 return Interval.stop(userTestData.user3.id());
             }).fail(function (error) {
-                expect(error.message).to.equal('STOP_CANNOT_BE_BEFORE_START');
+                expect(error.message).to.equal('START_CANNOT_BE_IN_FUTURE');
             });
     });
     it('throws that stop is later than start3', function () {
@@ -191,7 +191,15 @@ describe('Interval', function () {
             }).then(function () {
                 chai.assert.fail();
             }, function (error) {
-                expect(error.message).to.equal('STOP_CANNOT_BE_BEFORE_START');
+                expect(error.message).to.equal('START_CANNOT_BE_IN_FUTURE');
             });
     });
+    it('does not save an interval without a start', function () {
+        return Interval.save(intervalTestData.interval2User3Invalid)
+            .then(function () {
+                chai.assert.fail();
+            }, function (error) {
+                expect(error.message).to.equal('START_MISSING');
+            });
+    })
 });
