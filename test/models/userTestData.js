@@ -1,4 +1,4 @@
-var ObjectId = require('promised-mongo').ObjectId;
+var ObjectId = require('mongojs').ObjectId;
 
 module.exports = {
     user1: {

@@ -1,4 +1,4 @@
-var ObjectId = require('promised-mongo').ObjectId;
+var ObjectId = require('mongojs').ObjectId;
 var userTestData = require('./userTestData');
 function getDateInFuture(milliSeconds) {
     var date = new Date();

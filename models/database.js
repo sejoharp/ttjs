@@ -1,7 +1,7 @@
-var pmongo = require('promised-mongo');
+var mongojs = require('mongojs');
 var Config = require('../config');
 
-var db = pmongo('mongodb://' + Config.mongo.host + '/' + Config.mongo.database);
+var db = mongojs('mongodb://' + Config.mongo.host + '/' + Config.mongo.database);
 
 exports.db = db;
-exports.ObjectId = pmongo.ObjectId;
+exports.ObjectId = mongojs.ObjectId;

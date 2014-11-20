@@ -2,40 +2,39 @@ var db = require('./database').db;
 
 exports.collection = db.collection('intervals');
 exports.ObjectId = db.ObjectId;
-exports.findById = function (id) {
-    return exports.collection.findOne({_id: id});
+exports.findById = function (id, callback) {
+    exports.collection.findOne({_id: id}, callback);
 };
-exports.insert = function (interval) {
+exports.insert = function (interval, callback) {
     if (!interval.start) {
         interval.start = new Date();
     }
-    return exports.collection.insert(interval);
+    exports.collection.insert(interval, callback);
 };
-exports.findByUserId = function (userId) {
-    return exports.collection.find({userId: userId}).toArray();
+exports.findByUserId = function (userId, callback) {
+    exports.collection.find({userId: userId}, callback);
 };
-exports.save = function (document) {
-    return exports.collection.save(document);
+exports.save = function (document, callback) {
+    exports.collection.save(document, callback);
 };
-exports.isUserWorking = function (userId) {
-    return exports.collection.count({userId: userId, stop: {$exists: false}})
-        .then(function (count) {
-            return count > 0;
-        });
+exports.isUserWorking = function (userId, callback) {
+    exports.collection.count({userId: userId, stop: {$exists: false}}, function (error, amount) {
+        callback(error, amount > 0);
+    });
 };
-exports.start = function (userId) {
-    return exports.collection.insert({userId: userId, start: new Date()});
+exports.start = function (userId, callback) {
+    return exports.collection.insert({userId: userId, start: new Date()}, callback);
 };
-exports.stop = function (userId) {
-    return exports.collection.findOne({userId: userId, stop: {$exists: false}})
-        .then(function (interval) {
-            if (interval.start.getTime() > new Date){
-                throw new Error("START_CANNOT_BE_IN_FUTURE");
-            }
-            interval.stop = new Date();
-            return exports.save(interval);
-        });
+exports.stop = function (userId, callback) {
+    exports.collection.findOne({userId: userId, stop: {$exists: false}}, function (error, doc) {
+        if (doc.start.getTime() > new Date) {
+            callback(new Error("START_CANNOT_BE_IN_FUTURE"));
+        } else {
+            doc.stop = new Date();
+            exports.save(doc, callback);
+        }
+    });
 };
-exports.findInRange = function (userId, start, end) {
-    return exports.collection.find({start: {$gte: start, $lte: end},userId: userId}).toArray();
+exports.findInRange = function (userId, start, end, callback) {
+    return exports.collection.find({start: {$gte: start, $lte: end}, userId: userId}, callback);
 };
