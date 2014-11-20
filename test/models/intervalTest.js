@@ -114,6 +114,20 @@ describe('Interval', function () {
             });
         });
     });
+    it('does not save an interval without a start', function (done) {
+        Interval.save(intervalTestData.interval2User3Invalid, function (error, doc) {
+            expect(error.message).to.equal('START_MISSING');
+            done();
+        });
+    });
+    it('throws that stop is later than start', function (done) {
+        Interval.collection.insert(intervalTestData.interval2User3Open(), function () {
+            Interval.stop(userTestData.user3.id(), function (error) {
+                expect(error.message).to.equal('START_CANNOT_BE_IN_FUTURE');
+                done();
+            });
+        });
+    });
     it('finishes an interval(adds a stop date)', function (done) {
         Interval.save(intervalTestData.interval6User1Open, function () {
             Interval.stop(userTestData.user1.id(), function () {
@@ -169,18 +183,4 @@ describe('Interval', function () {
     });
     it('ignores open intervals when calculating overtime');
     it('ensures that stop is later than start');
-    it('throws that stop is later than start', function (done) {
-        Interval.collection.insert(intervalTestData.interval2User3Open(), function () {
-            Interval.stop(userTestData.user3.id(), function (error) {
-                expect(error.message).to.equal('START_CANNOT_BE_IN_FUTURE');
-                done();
-            });
-        });
-    });
-    it('does not save an interval without a start', function (done) {
-        return Interval.save(intervalTestData.interval2User3Invalid, function () {
-            expect(error.message).to.equal('START_MISSING');
-            done();
-        });
-    });
 });

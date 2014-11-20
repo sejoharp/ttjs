@@ -15,7 +15,11 @@ exports.findByUserId = function (userId, callback) {
     exports.collection.find({userId: userId}, callback);
 };
 exports.save = function (document, callback) {
-    exports.collection.save(document, callback);
+    if (!document.start) {
+        callback(new Error('START_MISSING'));
+    } else {
+        exports.collection.save(document, callback);
+    }
 };
 exports.isUserWorking = function (userId, callback) {
     exports.collection.count({userId: userId, stop: {$exists: false}}, function (error, amount) {
@@ -23,11 +27,11 @@ exports.isUserWorking = function (userId, callback) {
     });
 };
 exports.start = function (userId, callback) {
-    return exports.collection.insert({userId: userId, start: new Date()}, callback);
+    exports.collection.insert({userId: userId, start: new Date()}, callback);
 };
 exports.stop = function (userId, callback) {
     exports.collection.findOne({userId: userId, stop: {$exists: false}}, function (error, doc) {
-        if (doc.start.getTime() > new Date) {
+        if (doc.start.getTime() > new Date().getTime()) {
             callback(new Error("START_CANNOT_BE_IN_FUTURE"));
         } else {
             doc.stop = new Date();
@@ -36,5 +40,5 @@ exports.stop = function (userId, callback) {
     });
 };
 exports.findInRange = function (userId, start, end, callback) {
-    return exports.collection.find({start: {$gte: start, $lte: end}, userId: userId}, callback);
+    exports.collection.find({start: {$gte: start, $lte: end}, userId: userId}, callback);
 };
