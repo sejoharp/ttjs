@@ -17,6 +17,8 @@ exports.findByUserId = function (userId, callback) {
 exports.save = function (document, callback) {
     if (!document.start) {
         callback(new Error('START_MISSING'));
+    } else if (document.start.getTime() > new Date().getTime()) {
+        callback(new Error("START_CANNOT_BE_IN_FUTURE"));
     } else {
         exports.collection.save(document, callback);
     }
@@ -31,12 +33,8 @@ exports.start = function (userId, callback) {
 };
 exports.stop = function (userId, callback) {
     exports.collection.findOne({userId: userId, stop: {$exists: false}}, function (error, doc) {
-        if (doc.start.getTime() > new Date().getTime()) {
-            callback(new Error("START_CANNOT_BE_IN_FUTURE"));
-        } else {
-            doc.stop = new Date();
-            exports.save(doc, callback);
-        }
+        doc.stop = new Date();
+        exports.save(doc, callback);
     });
 };
 exports.findInRange = function (userId, start, end, callback) {
