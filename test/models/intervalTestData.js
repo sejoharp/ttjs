@@ -55,14 +55,14 @@ module.exports = {
     },
     interval1User3Closed: {
         _id: ObjectId(),
-        start: new Date(2014, 10, 1, 10, 0, 0, 0),
-        stop: new Date(2014, 10, 1, 18, 30, 0, 0),
+        start: new Date(2014, 10, 1, 8, 0, 0, 0),
+        stop: new Date(2014, 10, 1, 12, 0, 0, 0),
         userId: userTestData.user3._id
     },
     interval2User3Closed: {
         _id: ObjectId(),
-        start: new Date(2014, 10, 2, 8, 0, 0, 0),
-        stop: new Date(2014, 10, 2, 16, 0, 0, 0),
+        start: new Date(2014, 10, 1, 13, 0, 0, 0),
+        stop: new Date(2014, 10, 1, 17, 0, 0, 0),
         userId: userTestData.user3._id
     },
     interval2User3Invalid: {

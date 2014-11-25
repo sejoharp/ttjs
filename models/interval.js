@@ -40,3 +40,26 @@ exports.stop = function (userId, callback) {
 exports.findInRange = function (userId, start, end, callback) {
     exports.collection.find({start: {$gte: start, $lte: end}, userId: userId}, callback);
 };
+exports.getIntervalsPerDay = function (userId, day, callback) {
+    exports.findInRange(userId, exports.getFirstSecondOfDay(day), exports.getLastSecondOfDay(day), callback);
+};
+exports.getLastSecondOfDay = function (date) {
+    var lastSecondOfDay = new Date(date.getTime());
+    lastSecondOfDay.setHours(23, 59, 59, 999);
+    return lastSecondOfDay;
+};
+exports.getFirstSecondOfDay = function (date) {
+    var firstSecondOfDay = new Date(date.getTime());
+    firstSecondOfDay.setHours(0, 0, 0, 0);
+    return firstSecondOfDay;
+};
+exports.isEqual = function (interval1, interval2) {
+    if (interval1.start.getTime() !== interval2.start.getTime()) {
+        return false;
+    } else if (interval1.stop.getTime() !== interval2.stop.getTime()) {
+        return false;
+    } else if (interval1.userId.toString() !== interval2.userId.toString()) {
+        return false;
+    }
+    return true;
+};

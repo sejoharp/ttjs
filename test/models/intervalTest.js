@@ -5,8 +5,8 @@ var chai = require('chai');
 chai.use(require('chai-datetime'));
 var should = chai.should();
 var expect = chai.expect;
-var intervalTestData = require('./intervalTestData');
 var userTestData = require('./userTestData');
+var intervalTestData = require('./intervalTestData');
 
 describe('Interval', function () {
     beforeEach(function () {
@@ -109,7 +109,7 @@ describe('Interval', function () {
         });
         it('all instances in a given range', function (done) {
             Interval.collection.insert(intervalTestData.all(), function () {
-                Interval.findInRange(userTestData.user1._id, new Date(2014, 10, 10, 0, 0, 0, 0), new Date(2014, 10, 11, 23, 59, 59, 0), function (error, intervals) {
+                Interval.findInRange(userTestData.user1._id, new Date(2014, 10, 10, 0, 0, 0, 0), new Date(2014, 10, 11, 23, 59, 59, 999), function (error, intervals) {
                     expect(intervals).to.have.length(1);
                     expect(intervals[0].start).to.equalTime(intervalTestData.interval3User1Closed.start);
                     expect(intervals[0].stop).to.equalTime(intervalTestData.interval3User1Closed.stop);
@@ -117,6 +117,24 @@ describe('Interval', function () {
                     done();
                 });
             });
+        });
+        it('all instances from a user on a day', function (done) {
+            Interval.collection.insert(intervalTestData.all(), function () {
+                Interval.getIntervalsPerDay(userTestData.user3.id(), new Date(2014, 10, 1), function (error, intervals) {
+                    expect(intervals).to.have.length(2);
+                    expect(Interval.isEqual(intervals[0],intervalTestData.interval1User3Closed)).be.true;
+                    expect(Interval.isEqual(intervals[1],intervalTestData.interval2User3Closed)).be.true;
+                    done();
+                });
+            });
+        });
+    });
+    describe('compares', function () {
+        it('equality of instances', function () {
+            expect(Interval.isEqual(intervalTestData.interval1User1Closed, intervalTestData.interval1User1Closed)).to.be.true;
+        });
+        it('inequality of instances', function () {
+            expect(Interval.isEqual(intervalTestData.interval1User1Closed, intervalTestData.interval1User3Closed)).to.be.false;
         });
     });
     describe('inserts', function () {
@@ -172,14 +190,13 @@ describe('Interval', function () {
         });
     });
     describe('calculates', function () {
-        it('the overtime with given time to work per day', function (done) {
-            Interval.collection.insert(intervalTestData.all(), function () {
-                Interval.computeOvertime(userTestData.user1.id(), userTestData.user1.worktime, function (error, overtime) {
-                    expect(overtime).is.equal();
-                    done();
-                });
-            });
+        it('the first second on a day', function () {
+            var firstSecondOfDay = Interval.getFirstSecondOfDay(new Date(2014, 10, 1));
+            expect(firstSecondOfDay.getTime()).to.equal(new Date(2014, 10, 1, 0, 0, 0, 0).getTime());
         });
-        it('only closed intervals for overtime');
+        it('last first second on a day', function () {
+            var firstSecondOfDay = Interval.getLastSecondOfDay(new Date(2014, 10, 1));
+            expect(firstSecondOfDay.getTime()).to.equal(new Date(2014, 10, 1, 23, 59, 59, 999).getTime());
+        });
     });
 });
