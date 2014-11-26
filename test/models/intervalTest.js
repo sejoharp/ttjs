@@ -1,6 +1,5 @@
-"use strict";
-
-var Interval = require('../../models/interval');
+var Interval = require('../../models/interval').Interval;
+require('mocha-generators')();
 var chai = require('chai');
 chai.use(require('chai-datetime'));
 var should = chai.should();
@@ -10,16 +9,33 @@ var intervalTestData = require('./intervalTestData');
 
 describe('Interval', function () {
     beforeEach(function () {
-        Interval.collection.drop();
+//        yield Interval.remove();
     });
     describe('saves', function () {
-        it('an instance', function (done) {
-            Interval.collection.insert(intervalTestData.interval1User1Closed, function (err, docs) {
-                Interval.collection.findOne({_id: intervalTestData.interval1User1Closed._id}, function (err, doc) {
-                    expect(doc.userId.toString()).to.equal(intervalTestData.interval1User1Closed.userId.toString());
-                    done();
-                });
+        it('mongorito instance', function *() {
+            var Mongorito = require('mongorito');
+            var Config = require('../../config');
+
+            Mongorito.connect(Config.mongo.host + '/' + Config.mongo.database);
+            var Interval = Mongorito.Model.extend({
+                collection: 'intervals'
             });
+            var interval = new Interval({
+                start: new Date(2014, 10, 23, 10, 0, 0, 0),
+                stop: new Date(2014, 10, 23, 18, 0, 0, 0)
+            });
+            var interval2 = yield interval.save();
+            console.log('id: ' + interval2.get('_id'));
+            expect(interval2.get('_id')).to.exist;
+        });
+        it('an instance', function () {
+            var interval1 = new Interval({
+                start: new Date(2014, 10, 23, 10, 0, 0, 0),
+                stop: new Date(2014, 10, 23, 18, 0, 0, 0)
+            });
+            yield interval1.save();
+            var intervalSaved = yield Interval.findById(interval.id());
+            expect(Interval.isEqual(interval1, intervalSaved));
         });
         it('an instance with the property stop', function (done) {
             var stopDate = new Date();
@@ -122,8 +138,8 @@ describe('Interval', function () {
             Interval.collection.insert(intervalTestData.all(), function () {
                 Interval.getIntervalsPerDay(userTestData.user3.id(), new Date(2014, 10, 1), function (error, intervals) {
                     expect(intervals).to.have.length(2);
-                    expect(Interval.isEqual(intervals[0],intervalTestData.interval1User3Closed)).be.true;
-                    expect(Interval.isEqual(intervals[1],intervalTestData.interval2User3Closed)).be.true;
+                    expect(Interval.isEqual(intervals[0], intervalTestData.interval1User3Closed)).be.true;
+                    expect(Interval.isEqual(intervals[1], intervalTestData.interval2User3Closed)).be.true;
                     done();
                 });
             });
@@ -199,4 +215,5 @@ describe('Interval', function () {
             expect(firstSecondOfDay.getTime()).to.equal(new Date(2014, 10, 1, 23, 59, 59, 999).getTime());
         });
     });
-});
+})
+;

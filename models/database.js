@@ -1,7 +1,9 @@
-var mongojs = require('mongojs');
+var Mongorito = require('mongorito');
 var Config = require('../config');
 
-var db = mongojs('mongodb://' + Config.mongo.host + '/' + Config.mongo.database);
+Mongorito.connect(Config.mongo.host + '/' + Config.mongo.database);
 
-exports.db = db;
-exports.ObjectId = mongojs.ObjectId;
+exports.ObjectId = Mongorito.ObjectId;
+exports.Model = Mongorito.Model;
+exports.Collection = Mongorito.collection;
+
