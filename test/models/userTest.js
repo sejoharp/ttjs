@@ -5,7 +5,6 @@ var chai = require('chai');
 chai.use(require('chai-datetime'));
 var expect = chai.expect;
 var userTestData = require('./userTestData');
-var intervalTestData = require('./intervalTestData');
 
 describe('User', function () {
     beforeEach(function () {

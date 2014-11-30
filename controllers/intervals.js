@@ -6,4 +6,4 @@ exports.index = {
 
         reply(data);
     }
-}
+};
