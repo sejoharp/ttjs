@@ -3,7 +3,6 @@
 var User = require('../../models/user');
 var chai = require('chai');
 chai.use(require('chai-datetime'));
-var should = chai.should();
 var expect = chai.expect;
 var userTestData = require('./userTestData');
 var intervalTestData = require('./intervalTestData');
@@ -27,6 +26,7 @@ describe('User', function () {
                     expect(user._id.toString()).to.equal(userTestData.user1.id().toString());
                     expect(user.name).to.equal(userTestData.user1.name);
                     expect(user.worktime).to.equal(userTestData.user1.worktime);
+                    expect(user.password).to.not.exist;
                     done();
                 });
             });

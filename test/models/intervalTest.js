@@ -3,7 +3,6 @@
 var Interval = require('../../models/interval');
 var chai = require('chai');
 chai.use(require('chai-datetime'));
-var should = chai.should();
 var expect = chai.expect;
 var userTestData = require('./userTestData');
 var intervalTestData = require('./intervalTestData');
@@ -68,7 +67,7 @@ describe('Interval', function () {
         it('an instance by id', function (done) {
             Interval.collection.insert(intervalTestData.interval1User1Closed, function (err, doc) {
                 Interval.findById(doc._id, function (error, doc) {
-                    should.exist(doc);
+                    expect(doc).to.exist;
                     expect(error).to.not.exist;
                     doc.userId.toString().should.equal(intervalTestData.interval1User1Closed.userId.toString());
                     done();
