@@ -1,3 +1,5 @@
+var interval = require('../models/interval');
+
 exports.index = {
     handler: function (request, reply) {
         var data =
@@ -6,4 +8,7 @@ exports.index = {
 
         reply(data);
     }
+};
+function getWorkedTime(userid, date){
+
 };

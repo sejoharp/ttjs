@@ -11,9 +11,10 @@ server.ext('onRequest', function (request, next) {
     next();
 });
 
-server.route(Routes.endpoints);  
+server.route(Routes.endpoints);
 
 // Start the server
-server.start(function() {  
-    console.log("The server has started on port: " + server.info.port);
-});
+//server.start(function() {
+//    console.log("The server has started on port: " + server.info.port);
+//});
+module.exports = server;
