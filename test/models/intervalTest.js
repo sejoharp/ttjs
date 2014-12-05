@@ -69,7 +69,7 @@ describe('interval', function () {
                 interval.findById(doc._id, function (error, doc) {
                     expect(doc).to.exist;
                     expect(error).to.not.exist;
-                    doc.userId.toString().should.equal(intervalTestData.interval1User1Closed.userId.toString());
+                    expect(doc.userId.toString()).to.equal(intervalTestData.interval1User1Closed.userId.toString());
                     done();
                 });
             });
@@ -79,7 +79,7 @@ describe('interval', function () {
                 interval.findByUserId(intervalTestData.interval4User2Closed.userId, function (error, docs) {
                     expect(docs).to.have.length(1);
                     expect(docs[0].start).to.equalTime(intervalTestData.interval4User2Closed.start);
-                    docs[0].userId.toString().should.equal(intervalTestData.interval4User2Closed.userId.toString());
+                    expect(docs[0].userId.toString()).to.equal(intervalTestData.interval4User2Closed.userId.toString());
                     done();
                 });
             });
@@ -139,8 +139,8 @@ describe('interval', function () {
     describe('inserts', function () {
         it('an instance with new date as default, if not given', function (done) {
             var userId = interval.ObjectId();
-            interval.insert({userId: userId}, function (error, interval) {
-                interval.findById(interval._id, function (error, doc) {
+            interval.insert({userId: userId}, function (error, result) {
+                interval.findById(result._id, function (error, doc) {
                     expect(doc.start).to.be.a('Date');
                     expect(doc.start).to.equalDate(new Date());
                     expect(doc.start).to.beforeTime(new Date());
@@ -150,8 +150,8 @@ describe('interval', function () {
             });
         });
         it('an instance with a given date', function (done) {
-            interval.insert(intervalTestData.interval5User1Open, function (error, interval) {
-                interval.findById(interval._id, function (error, doc) {
+            interval.insert(intervalTestData.interval5User1Open, function (error, result) {
+                interval.findById(result._id, function (error, doc) {
                     expect(doc.start.getTime()).to.equal(intervalTestData.interval5User1Open.start.getTime());
                     expect(doc.userId.toString()).to.equal(intervalTestData.interval5User1Open.userId.toString());
                     done();
