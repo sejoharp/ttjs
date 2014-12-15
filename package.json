@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.10.4",
     "hapi": "^7.5.2",
     "mongojs": "^0.17.0"
   },
